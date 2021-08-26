@@ -95,7 +95,6 @@ function onGalleryListClick(evt) {
   let itemChoose = galleryItems.find(item => item.preview === evt.target.src);
   let currentIndex;
   currentIndex = galleryItems.indexOf(itemChoose);
-  console.log(evt.target);
   refs.lightboxImage.src = itemChoose.original;
   refs.lightboxImage.alt = itemChoose.description;
 }
