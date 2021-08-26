@@ -67,13 +67,46 @@ const galleryItems = [
 const refs = {
   galleryList: document.querySelector('.js-gallery'),
   lightbox: document.querySelector('.js-lightbox'),
+  modalCloseButton: document.querySelector('button[data-action=close-lightbox]'),
   lightboxImage: document.querySelector('.lightbox__image')
 }
 
-const galleryMarkup = () => {
-  const markup = galleryItems.reduce((acc, {preview, description}) => {
-   return acc += `<li class="gallery__item"><a href="" class="gallery__link"><img src="${preview}" alt="${description}" class="gallery__image"></a></li>`;
-  }, "");
-  refs.galleryList.insertAdjacentHTML('afterbegin', markup);
+function galleryMarkup(galleryItems) {
+  return galleryItems.map(({ preview, description }) => {
+    return `<li class="gallery__item"><a href="" class="gallery__link">
+  <img src="${preview}" alt="${description}" class="gallery__image"></a></li>`;
+  })
+    .join('');
+  
+}
+
+const newMarkup = galleryMarkup(galleryItems);
+refs.galleryList.insertAdjacentHTML('afterbegin', newMarkup);
+refs.galleryList.addEventListener('click', onGalleryListClick);
+
+function onGalleryListClick(evt) {
+  const picture = evt.target.classList.contains('gallery__image');
+
+  if (!picture) {
+    return;
+  }
+  evt.preventDefault();
+  refs.lightbox.classList.add('is-open');
+  let itemChoose = galleryItems.find(item => item.preview === evt.target.src);
+  let currentIndex;
+  currentIndex = galleryItems.indexOf(itemChoose);
+  console.log(evt.target);
+  refs.lightboxImage.src = itemChoose.original;
+  refs.lightboxImage.alt = itemChoose.description;
+}
+
+function onCloseModal(evt) {
+  const trueButton = evt.target.dataset.action === "close-lightbox" || evt.target.className === "lightbox__overlay";
+  if (!trueButton) {
+    return;
+  };
+    refs.lightbox.classList.remove('is-open');
+    refs.lightboxImage.src = "";
+    refs.lightboxImage.alt = "";   
 };
-galleryMarkup();
+refs.modalCloseButton.addEventListener('click', onCloseModal);
